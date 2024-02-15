@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Return Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 800px; /* Adjusted max-width to match import_book.html */
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+        .title-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        h2.title {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 5px;
+            margin-bottom: 0; /* Adjust margin to match other pages */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+            width: 100%; /* Make the button full-width */
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        .back-btn {
+            position: fixed; /* Change position to fixed */
+            top: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Back button -->
+        <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button> 
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+        </script>
+
+        <!-- Title container -->
+        <div class="title-container">
+            <h2 class="title">Return Book</h2>
+        </div>
+
+        <form action="" method="POST">
+            <div class="form-group">
+                <label for="transaction_id">Select Transaction</label>
+                <select class="form-control" id="transaction_id" name="transaction_id">
+                    {% for transaction, book_title, member_name in transactions %}
+                        <option value="{{ transaction.id }}">Book: {{ book_title }}, Member: {{ member_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="issue_date">Book Issue Date</label>
+                <input type="date" class="form-control" id="issue_date" name="issue_date" required>
+            </div>
+            <div class="form-group">
+                <label for="return_date">Book Return Date</label>
+                <input type="date" class="form-control" id="return_date" name="return_date" required>
+            </div>
+        
+            <button type="submit" class="btn btn-warning">Return Book</button>
+        </form>
+    </div>
+</body>
+</html>

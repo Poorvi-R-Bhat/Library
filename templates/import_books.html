@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import Books</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .title-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        h2.title {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 5px;
+            margin-bottom: 0; /* Adjust margin to match other pages */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            width: 100%;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-container">
+            <h2 class="title">Import Books</h2>
+        </div>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="/import-books" method="POST">
+            <div class="form-group">
+                <label for="title">Title (optional)</label>
+                <input type="text" class="form-control" id="title" name="title">
+            </div>
+            <div class="form-group">
+                <label for="authors">Authors (optional)</label>
+                <input type="text" class="form-control" id="authors" name="authors">
+            </div>
+            <div class="form-group">
+                <label for="isbn">ISBN (optional)</label>
+                <input type="text" class="form-control" id="isbn" name="isbn">
+            </div>
+            <div class="form-group">
+                <label for="publisher">Publisher (optional)</label>
+                <input type="text" class="form-control" id="publisher" name="publisher">
+            </div>
+            <div class="form-group">
+                <label for="number_of_books">Number of Books to Import</label>
+                <input type="number" class="form-control" id="number_of_books" name="number_of_books" value="20" min="1">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Import Books</button>
+        </form>
+    </div>
+    <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

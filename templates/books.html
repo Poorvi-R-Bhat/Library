@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Books</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('background_image.jpg');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .title-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 5px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn-add {
+            margin-right: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .btn-delete-all {
+            background-color: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+        }
+        .btn-delete-all:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .table th:hover {
+            background-color: #0056b3;
+        }
+        .table td {
+            border-top: 1px solid #dee2e6;
+        }
+        .action-icons a {
+            margin-right: 10px;
+            color: #007bff;
+        }
+        .action-icons a:hover {
+            color: #0056b3;
+        }
+        .pagination-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn-more {
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-more:hover {
+            background-color: #0056b3;
+        }
+        .custom-checkbox {
+            margin: 0;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="container">
+            <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button> <!-- Back button -->
+            <script>
+            function goBack() {
+              window.history.back();
+            }
+            </script>
+            <div class="title-container">
+            <h2 class="title">Books</h2>
+        </div>
+        <div class="btn-container">
+            <form action="/books" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search books by title or author" name="search" value="{{ search_query }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+            <a href="/add-book" class="btn btn-success btn-add"><i class="fas fa-plus"></i> Add New Book</a> <!-- Added icon -->
+            <form action="/delete-all-books" method="POST" onsubmit="return confirm('Are you sure you want to delete all books? This action cannot be undone.');">
+                <button type="submit" class="btn btn-danger btn-delete-all">Delete All Books</button>
+            </form>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="custom-checkbox" id="select-all" onchange="selectAllBooks()"></th> <!-- Added checkbox for select all -->
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td><input type="checkbox" class="custom-checkbox"></td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.stock }}</td>
+                    <td class="action-icons">
+                        <a href="/books/update/{{ book.id }}"><i class="fas fa-edit"></i></a>
+                        <form action="/books/delete/{{ book.id }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                            <button type="submit" class="btn-delete"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            
+            </tbody>
+        </table>
+
+
+    <script>
+        function selectAllBooks() {
+            let checkboxes = document.querySelectorAll('.custom-checkbox');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = document.getElementById('select-all').checked;
+            });
+        }
+
+        function fetchData(count) {
+            // Replace this with your actual logic to fetch and display more books from the backend
+            console.log(`Fetching and displaying ${count} books`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Members</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative; /* Added for absolute positioning */
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+        .title-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 5px;
+        }
+        .btn-container {
+            text-align: right; /* Center align the buttons */
+            margin-bottom: 20px;
+        }
+        .btn-delete-selected {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-delete-selected:hover {
+            background-color: #c82333;
+        }
+        .table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .table th:hover {
+            background-color: #0056b3;
+        }
+        .table td {
+            border-top: 1px solid #dee2e6;
+        }
+        .member-name {
+            font-weight: bold;
+        }
+        .member-actions {
+            display: flex;
+            justify-content: center; /* Center align the buttons */
+        }
+        .member-actions a {
+            margin-right: 10px;
+            color: #007bff;
+        }
+        .member-actions a:hover {
+            color: #0056b3;
+        }
+        .custom-checkbox {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+        </script>
+        <div class="title-container">
+            <h2 class="title">Members</h2>
+        </div>
+        
+
+        <form action="{{ url_for('add_member') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-add">Add Member</button>
+        </form>
+
+        <div class="btn-container">
+            <button onclick="deleteSelectedMembers()" class="btn btn-danger btn-delete-selected">Delete Selected Members</button>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="custom-checkbox" id="select-all" onchange="selectAllMembers()"></th>
+                    <th>Name</th>
+                    <th>Pending Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                    <tr>
+                        <td><input type="checkbox" class="custom-checkbox"></td>
+                        <td class="member-name">{{ member.name }}</td>
+                        <td>{{ member.pending_amount }}</td>
+                        <td class="member-actions">
+                            <a href="/members/update/{{ member.id }}"><i class="fas fa-edit"></i></a> <!-- Edit icon -->
+                            <form action="/members/delete/{{ member.id }}" method="POST" style="display: inline-block;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="fas fa-trash-alt"></i></button> <!-- Delete icon -->
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function selectAllMembers() {
+            let checkboxes = document.querySelectorAll('.custom-checkbox');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = document.getElementById('select-all').checked;
+            });
+        }
+
+        function deleteSelectedMembers() {
+            let selectedMembers = document.querySelectorAll('.custom-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('Please select at least one member to delete.');
+                return;
+            }
+
+            let confirmation = confirm('Are you sure you want to delete the selected members?');
+            if (confirmation) {
+            selectedMembers.forEach((member) => {
+                // Perform deletion action here for each selected member
+                // Example: You can make an AJAX request to delete the member
+                member.closest('tr').remove(); // For demonstration, remove the row from the table
+                
+                // Display flash message
+                let flashMessage = document.querySelector('.flash-messages');
+                flashMessage.innerHTML = '<div class="alert alert-success">Member(s) deleted successfully</div>';
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

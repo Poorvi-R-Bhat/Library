@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transactions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .title-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        h2.title {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 5px;
+            margin-bottom: 0; /* Adjust margin to match other pages */
+        }
+        th, td {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+        }
+        /* Apply border to specified columns */
+        th:nth-child(1), td:nth-child(1), /* Transaction ID */
+        th:nth-child(2), td:nth-child(2), /* Book Title */
+        th:nth-child(3), td:nth-child(3), /* Member Name */
+        th:nth-child(4), td:nth-child(4), /* Issue Date */
+        th:nth-child(5), td:nth-child(5), /* Return Date */
+        th:nth-child(6), td:nth-child(6), /* Rent Fee */
+        th:nth-child(7), td:nth-child(7) { /* Pending Amount */
+            border: 1px solid #dee2e6;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: flex-end; /* Adjusted alignment to right */
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn-delete-all {
+            background-color: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+        }
+        .btn-delete-all:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .custom-checkbox {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="title-container">
+            <h2 class="title">Transactions</h2>
+        </div>
+        
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="btn-container">
+            <button onclick="deleteAllTransactions()" class="btn btn-danger btn-delete-all">Delete All Transactions</button>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="custom-checkbox" id="select-all" onchange="selectAllTransactions()"></th>
+                    <th>Transaction ID</th>
+                    <th>Book Title</th>
+                    <th>Member Name</th>
+                    <th>Issue Date</th>
+                    <th>Return Date</th>
+                    <th>Rent Fee</th>
+                    <th>Pending Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td><input type="checkbox" class="custom-checkbox"></td>
+                        <td>{{ transaction.transaction_id }}</td>
+                        <td>{{ transaction.book_title }}</td>
+                        <td>{{ transaction.member_name }}</td>
+                        <td>{{ transaction.issue_date }}</td>
+                        <td>{{ transaction.return_date if transaction.return_date else 'Not Returned' }}</td>
+                        <td>{{ transaction.rent_fee if transaction.rent_fee else 'N/A' }}</td>
+                        <td>{{ transaction.pending_amount if transaction.pending_amount else 'N/A' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    
+        function selectAllTransactions() {
+            let checkboxes = document.querySelectorAll('.custom-checkbox');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = document.getElementById('select-all').checked;
+            });
+        }
+    
+        function deleteAllTransactions() {
+            let selectedTransactions = document.querySelectorAll('.custom-checkbox:checked');
+            if (selectedTransactions.length === 0) {
+                alert('Please select at least one transaction to delete.');
+                return;
+            }
+    
+            let transactionIds = [];
+            selectedTransactions.forEach((checkbox) => {
+                transactionIds.push(checkbox.parentNode.nextElementSibling.textContent);
+            });
+    
+            if (confirm('Are you sure you want to delete the selected transactions?')) {
+                fetch('/delete-all-transactions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ transactionIds: transactionIds })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Refresh the page after successful deletion
+                    } else {
+                        throw new Error('Failed to delete transactions.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete transactions. Please try again.');
+                });
+            }
+        }
+    </script>
+    </body>
+</html>
