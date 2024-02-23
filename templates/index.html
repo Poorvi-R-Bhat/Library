@@ -9,15 +9,30 @@
     <style>
         body {
             background-color: #f0f0f0; /* Change background color */
-            font-family: Arial, sans-serif;
+            font-family: Archive, sans-serif;
+            margin: 0; /* Remove default body margin */
+
         }
         .container {
             margin-top: 50px;
             text-align: center;
-            border: 2px solid #007bff; /* Add border around the page */
+            border: 2px solid #e7d553; /* Add border around the page */
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+            background-image: url('index_Image.jpg'); /* Add background image */
+            background-size: cover;
+            background-position: center;   
+            position: relative; /* Add relative positioning to the container */
+            background-image: url('{{ url_for('static', filename='background.png') }}'); Update background image
+
+        }
+        .app-logo {
+            width: 150px; /* Set the width of the logo */
+            height: 150px; /* Maintain aspect ratio */
+            position: absolute; /* Position the logo absolutely within the container */
+            top: 3px; /* Adjust top position as needed */
+            left: 10px; /* Adjust left position as needed */
         }
         .btn-container {
             display: flex;
@@ -31,8 +46,8 @@
             height: 70px;
             font-size: 18px;
             border-radius: 35px;
-            background-color: #343a40;
-            color: #fff;
+            background-color: #181d22;
+            color: #140505;
             border: none;
             cursor: pointer;
             display: flex;
@@ -48,55 +63,61 @@
             background-color: #5a6268;
         }
         h1 {
-            color: #007bff; /* Change title color */
+            color: #020507; /* Change title color */
             margin-bottom: 30px;
             border-bottom: 2px solid #007bff; /* Add border to the title */
             padding-bottom: 10px;
             display: inline-block; /* Highlight title with frame */
             padding: 10px 20px;
-            border: 2px solid #007bff;
+            border: 2px solid #d6b52e;
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
         }
         .btn-main:not(.view-transactions-btn):not(.issue-book-btn) {
-            background-color: #28a745; /* Green */
-            border-color: #28a745; /* Green */
+            background-color: #d6b52e; 
+            border-color: #d6b52e; 
         }
         .btn-main:not(.view-transactions-btn):not(.issue-book-btn):hover {
-            background-color: #218838; /* Darker Green */
-            border-color: #1e7e34; /* Dark Green */
+            background-color: #d6b52e; 
+            border-color: #d6b52e; 
         }
         .view-transactions-btn {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff;
+            background-color: #d6b52e;
+            color: #333;
+            border-color: #d6b52e;
         }
         .view-transactions-btn:hover {
-            background-color: #0056b3;
+            background-color: #d6b52e;
             color: #fff;
-            border-color: #0056b3;
+            border-color: #d6b52e;
         }
         .issue-book-btn {
-            background-color: #28a745; /* Green */
-            border-color: #28a745; /* Green */
+            background-color: #d6b52e; 
+            border-color: #d6b52e; 
         }
         .issue-book-btn:hover {
-            background-color: #218838; /* Darker Green */
-            border-color: #1e7e34; /* Dark Green */
+            background-color: #d6b52e; 
+            border-color: #d6b52e; 
         }
+        .container h1 {
+            border: 2px solid #d6b52e;
+        }
+
     </style>
 </head>
-<body>
+<img src="{{ url_for('static', filename='index_Image.jpg') }}" alt="Index Image"  width="1500" height="300">
     <div class="container">
-        <h1><i class="fas fa-book icon"></i>Library Management System</h1> <!-- Add icon to the title -->
+        <img src="{{ url_for('static', filename='Poorvi_logo.PNG') }}" width="150" height="250" class="app-logo">
+
+        <h1>Library Management System</h1> <!-- Add icon to the title -->
         <div class="btn-container">
             <a href="/books" class="btn btn-primary btn-main"><i class="fas fa-book icon"></i>Manage Books</a>
             <a href="/members" class="btn btn-secondary btn-main"><i class="fas fa-users icon"></i>Manage Members</a>
-            <a href="/issue-book" class="btn btn-success btn-main"><i class="fas fa-plus icon"></i>Issue Book</a> <!-- Add icon to issue book button -->
+            <a href="/issue-book" class="btn btn-success btn-main"><i class="fas fa-plus icon"></i>Issue Book</a> 
             <a href="/return-book" class="btn btn-warning btn-main"><i class="fas fa-undo-alt icon"></i>Return Book</a>
             <a href="/import-books" class="btn btn-info btn-main"><i class="fas fa-file-import icon"></i>Import Books</a>
-            <a href="/transactions" class="btn btn-info btn-main view-transactions-btn"><i class="fas fa-list icon"></i>View Transactions</a>
+            <a href="/transactions" class="btn btn-info btn-main"><i class="fas fa-list icon"></i>View Transactions</a>
         </div>
     </div>
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Aptos', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
@@ -15,7 +15,7 @@
         .container {
             margin-top: 50px;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 10px;    
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             max-width: 800px;
@@ -24,8 +24,8 @@
             position: relative; /* Added for absolute positioning */
         }
         h2 {
-            color: #007bff;
-            margin-bottom: 30px;
+            color: #d6b52e;
+            margin-bottom: 20px;
             text-align: center;
         }
         .form-group {
@@ -38,14 +38,16 @@
         .btn-primary {
             background-color: #007bff;
             border-color: #007bff;
+            padding: 10px 20px; /* Adjusted padding for button size */
         }
         .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: #007bff;
+            border-color: #d6b52e;
         }
         .btn-danger {
             background-color: #dc3545;
             border-color: #dc3545;
+            padding: 10px 20px; /* Adjusted padding for button size */
         }
         .btn-danger:hover {
             background-color: #c82333;
@@ -55,8 +57,8 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #007bff;
-            color: #fff;
+            background: #d6b52e;
+            color: #333;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -66,7 +68,7 @@
             margin-right: 5px;
         }
         .title-container {
-            background-color: #f0f0f0;
+            background-color: #d6b52e;
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -86,7 +88,7 @@
             color: #fff;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 10px 20px; /* Adjusted padding for button size */
             text-decoration: none;
             transition: background-color 0.3s ease;
         }
@@ -94,11 +96,11 @@
             background-color: #c82333;
         }
         .table th {
-            background-color: #007bff;
-            color: #fff;
+            background-color: #d6b52e;
+            color: #333;
         }
         .table th:hover {
-            background-color: #0056b3;
+            background-color: #d6b52e;
         }
         .table td {
             border-top: 1px solid #dee2e6;
@@ -112,14 +114,48 @@
         }
         .member-actions a {
             margin-right: 10px;
-            color: #007bff;
+            color: #d6b52e;
         }
         .member-actions a:hover {
-            color: #0056b3;
+            color: #d6b52e;
         }
         .custom-checkbox {
             margin: 0;
         }
+        .selected-members-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .action-icons .edit-icon {
+            display: inline-block;
+            padding: 5px;
+            border: 1px solid #d6b52e; /* Yellow border */
+            border-radius: 5px;
+            color: #fff; /* Icon color */
+            position: relative;
+        }
+
+        .action-icons .edit-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background-color: #d6b52e; /* Yellow background */
+            border-radius: 5px;
+        }
+
+        .action-icons .edit-icon i {
+            position: relative;
+            z-index: 1; /* This ensures the icon stays above the pseudo-element background */
+        }
+
+        
+
+        
+
+
     </style>
 </head>
 <body>
@@ -135,29 +171,38 @@
                 {% endif %}
             {% endwith %}
         </div>
-        <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
-        <script>
-            function goBack() {
-              window.history.back();
-            }
-        </script>
+        <!-- Back button -->
+        <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button> 
+        <a href="/" class="btn btn-primary position-fixed" style="bottom: 20px; left: 20px;"><i class="fas fa-home"></i> Home</a>
         <div class="title-container">
             <h2 class="title">Members</h2>
-        </div>
-        
-
+        </div>  
+        <form class="form-inline justify-content-center mb-3" action="{{ url_for('search_members') }}" method="GET"> <!-- Align center -->
+            <label class="sr-only" for="searchInput">Search Members</label>
+            <input type="text" class="form-control mr-sm-2" id="searchInput" placeholder="Search members by name" name="search" value="{{ search_query }}">
+            <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button> <!-- Black button with white text -->
+        </form>
+      
         <form action="{{ url_for('add_member') }}" method="POST">
             <div class="form-group">
-                <label for="name">Name:</label>
+                <label for="name"><b>Type Here to add a new Member</b></label>
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-add">Add Member</button>
+            <div class="row">
+                <div class="col-sm-6 mb-2">
+                    <button type="submit" class="btn btn-primary btn-block">Add Member</button>
+                </div>
+                <div class="col-sm-6 mb-2" >
+                    <button onclick="deleteAllMembers()" class="btn btn-danger btn-block">Delete All Members</button>
+                </div>
+            </div>
+                <div class="col-sm-6 mb-2" >Selected:
+                <span id="selectedMemberCount" class="text-muted"></span>
+            </div> 
+            <!-- <div class="col-sm-6 mb-2">Selected: <span id="selected-count">0</span></div>                 -->
+
+
         </form>
-
-        <div class="btn-container">
-            <button onclick="deleteSelectedMembers()" class="btn btn-danger btn-delete-selected">Delete Selected Members</button>
-        </div>
-
         <table class="table">
             <thead>
                 <tr>
@@ -167,14 +212,15 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="memberList">
                 {% for member in members %}
                     <tr>
                         <td><input type="checkbox" class="custom-checkbox"></td>
                         <td class="member-name">{{ member.name }}</td>
                         <td>{{ member.pending_amount }}</td>
-                        <td class="member-actions">
-                            <a href="/members/update/{{ member.id }}"><i class="fas fa-edit"></i></a> <!-- Edit icon -->
+                        <td class="action-icons">
+                            <a href="/members/update/{{ member.id }}" class="edit-icon"><i class="fas fa-edit"></i>
+                            </i></a> <!-- Edit icon -->
                             <form action="/members/delete/{{ member.id }}" method="POST" style="display: inline-block;">
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="fas fa-trash-alt"></i></button> <!-- Delete icon -->
                             </form>
@@ -186,34 +232,68 @@
     </div>
 
     <script>
+        function goBack() {
+          window.history.back();
+        }
+    
         function selectAllMembers() {
             let checkboxes = document.querySelectorAll('.custom-checkbox');
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = document.getElementById('select-all').checked;
-            });
+            for (let i = 1; i < checkboxes.length; i++) { // Start loop from index 1
+                checkboxes[i].checked = document.getElementById('select-all').checked;
+            }
+            updateSelectedMemberCount(); // Update selected member count
         }
-
+    
         function deleteSelectedMembers() {
             let selectedMembers = document.querySelectorAll('.custom-checkbox:checked');
-            if (selectedMembers.length === 0) {
+            let selectedMemberCount = selectedMembers.length; // Get the count of selected members
+            if (selectedMemberCount === 0) {
                 alert('Please select at least one member to delete.');
                 return;
             }
-
-            let confirmation = confirm('Are you sure you want to delete the selected members?');
+    
+            let confirmation = confirm(`Are you sure you want to delete the selected ${selectedMemberCount} member(s)?`);
             if (confirmation) {
-            selectedMembers.forEach((member) => {
-                // Perform deletion action here for each selected member
-                // Example: You can make an AJAX request to delete the member
-                member.closest('tr').remove(); // For demonstration, remove the row from the table
-                
-                // Display flash message
-                let flashMessage = document.querySelector('.flash-messages');
-                flashMessage.innerHTML = '<div class="alert alert-success">Member(s) deleted successfully</div>';
-            });
+                selectedMembers.forEach((member) => {
+                    if (member.closest('tr').rowIndex > 0) { // Check if it's not the header row
+                        member.closest('tr').remove(); // For demonstration, remove the row from the table
+    
+                        // Display flash message
+                        let flashMessage = document.querySelector('.flash-messages');
+                        flashMessage.innerHTML = '<div class="alert alert-success">Member(s) deleted successfully</div>';
+                    }
+                });
+                updateSelectedMemberCount(); // Update selected member count
+            }
         }
-    }
-</script>
-
+    
+        
+        function deleteAllMembers() {
+            let confirmation = confirm('Are you sure you want to delete all members?');
+            if (confirmation) {
+                let allMembers = document.querySelectorAll('.custom-checkbox');
+                allMembers.forEach((member, index) => {
+                    if (index > 0) { // Check if it's not the header row
+                        member.checked = true; // Select all members
+                    }
+                });
+                deleteSelectedMembers(); // Call deleteSelectedMembers function to delete all selected members
+            }
+        }
+    
+        function updateSelectedMemberCount() {
+            let selectedMembers = document.querySelectorAll('.custom-checkbox:checked');
+            let selectedMemberCount = 0;
+    
+            selectedMembers.forEach((member) => {
+                if (member.closest('tr').rowIndex > 0) { // Check if it's not the header row
+                    selectedMemberCount++;
+                }
+            });
+    
+            document.getElementById('selectedMemberCount').innerText = ` ${selectedMemberCount}`;
+        }
+    </script>
+    
 </body>
 </html>

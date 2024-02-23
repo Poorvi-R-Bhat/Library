@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Aptos', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
@@ -17,7 +17,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #d6b52e;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
@@ -34,7 +34,7 @@
             color: #333;
             text-align: center;
             padding-bottom: 5px;
-            margin-bottom: 0; /* Adjust margin to match members.html */
+            margin-bottom: 0; 
         }
         .form-group {
             margin-bottom: 20px;
@@ -43,19 +43,19 @@
             font-weight: bold;
         }
         button[type="submit"] {
-            background-color: #007bff;
+            background-color: #333;
             color: #fff;
             width: 100%;
         }
         button[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #333;
         }
         .back-btn {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #007bff;
-            color: #fff;
+            background: #d6b52e;
+            color: #333;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -84,36 +84,43 @@
                 <h2 class="title">Issue Book to Member</h2>
             </div>
     
-            <form action="" method="POST">
-                <div class="form-group">
-                    <label for="book_id">Book</label>
-                    <select class="form-control" id="book_id" name="book_id">
-                        {% for book in books %}
-                            <option value="{{ book.id }}">{{ book.title }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="member_id">Member</label>
-                    <select class="form-control" id="member_id" name="member_id">
-                        {% for member in members %}
-                            <option value="{{ member.id }}">{{ member.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="daily_rent_fee">Daily Rent Fee (in ₹)</label>
-                    <input type="number" class="form-control" id="daily_rent_fee" name="daily_rent_fee" step="0.01" value="10" required>
-                </div>
-                <div class="form-group">
-                    <label for="issue_date">Issue Date</label>
-                    <input type="date" class="form-control" id="issue_date" name="issue_date" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Issue Book</button>
-            </form>
+    <form action="" method="POST">
+        <div class="form-group">
+            <label for="book_id">Book</label>
+            <select class="form-control" id="book_id" name="book_id" onchange="updateBookStock()">
+                {% for book in books %}
+                    <option value="{{ book.id }}" data-stock="{{ book.stock }}">{{ book.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="book_stock">Book Stock</label>
+            <input type="text" class="form-control" id="book_stock" name="book_stock" readonly>
+        </div>
+        <div class="form-group">
+            <label for="member_id">Member</label>
+            <select class="form-control" id="member_id" name="member_id">
+                {% for member in members %}
+                    <option value="{{ member.id }}">{{ member.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="daily_rent_fee">Daily Rent Fee (in ₹)</label>
+            <input type="number" class="form-control" id="daily_rent_fee" name="daily_rent_fee" step="0.01" value="10" required>
+        </div>
+        <div class="form-group">
+            <label for="issue_date">Issue Date</label>
+            <input type="date" class="form-control" id="issue_date" name="issue_date" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Issue Book</button>
+    </form>
+
         </div>
         <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+        <a href="/" class="btn btn-primary position-fixed" style="bottom: 20px; left: 20px;"><i class="fas fa-home"></i> Home</a>
+
 
         <script>
             function goBack() {
@@ -121,5 +128,30 @@
             }
         </script>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get today's date in the format yyyy-mm-dd
+            const today = new Date().toISOString().split('T')[0];
+    
+            // Set the default value for the issue_date input field
+            document.getElementById('issue_date').value = today;
+        });
+    </script>
+    
+            <script>
+                function goBack() {
+                    window.history.back();
+                }
+    
+                function updateBookStock() {
+                    var bookSelect = document.getElementById("book_id");
+                    var selectedBook = bookSelect.options[bookSelect.selectedIndex];
+                    var bookStock = selectedBook.getAttribute("data-stock");
+                    document.getElementById("book_stock").value = bookStock;
+                }
+            </script>
+    
+    
+    
 </body>
 </html>

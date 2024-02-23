@@ -1,9 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime, timedelta
-
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+from flask import current_app
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '965ac1256822a7b537cad696f9e28616265575b638946db526d9ce2667fb5b59'
@@ -21,6 +23,8 @@ class Book(db.Model):
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     stock = db.Column(db.Integer, default=1)
+    transactions = relationship("Transaction", back_populates="book")
+
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +40,8 @@ class Transaction(db.Model):
     return_date = db.Column(db.DateTime)
     rent_fee = db.Column(db.Float, default=0.0)  # Total rent fee charged at return
     daily_rent_fee = db.Column(db.Float, default=10.0)  #  this line for daily rent fee
+    book = relationship("Book", back_populates="transactions")
+
 
 
 # Routes
@@ -65,13 +71,12 @@ def books():
         # Filter books based on the search query
         books = Book.query.filter((Book.title.contains(search_query)) | (Book.author.contains(search_query))).all()
     else:
-        # If there's no search query, display all books
+        # If there is no search query, display all books
         books = Book.query.all()
 
     return render_template('books.html', books=books, search_query=search_query)
 
-# Existing route for adding a book
-# Update the route for adding a book to accept both GET and POST methods
+# route for adding a book to accept both GET and POST methods
 @app.route('/add-book', methods=['GET', 'POST'])
 def add_book():
     if request.method == 'POST':
@@ -89,8 +94,6 @@ def add_book():
             flash('Missing information. Please make sure all fields are filled out.', 'danger')
 
     return render_template('add_book.html')  # Render the add_book.html template for GET requests
-
-
 
 
 @app.route('/books/update/<int:book_id>', methods=['GET', 'POST'])
@@ -114,7 +117,28 @@ def delete_book(book_id):
     flash('Book deleted successfully', 'success')
     return redirect(url_for('books'))
 
-
+@app.route('/issue-selected-books', methods=['POST'])
+def issue_selected_books():
+    book_ids = request.form.getlist('book_ids')
+    if book_ids:
+        # Redirect to the issue_book route with selected book IDs as URL parameters
+        return redirect(url_for('issue_book', book_ids=','.join(book_ids)))
+    else:
+        flash('No books selected.', 'danger')
+        return redirect(url_for('issue_book'))
+    
+@app.route('/delete-all-books', methods=['POST'])
+def delete_all_books():
+    try:
+        # Delete all book records
+        Book.query.delete()
+        db.session.commit()
+        flash('All books have been successfully deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while deleting books: {}'.format(e), 'danger')
+    
+    return redirect(url_for('books'))
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
@@ -132,7 +156,7 @@ def add_member():
     name = request.form.get('name')
     if not name:
         flash('Member name is required.', 'error')
-        return redirect(url_for('members'))  # Replace 'members_page' with the name of your members list route
+        return redirect(url_for('members'))
     
     new_member = Member(name=name)
     db.session.add(new_member)
@@ -170,6 +194,27 @@ def delete_member(member_id):
     return redirect(url_for('members', _anchor='members_flash'))
 
 
+
+@app.route('/search-members', methods=['GET'])
+def search_members():
+    search_query = request.args.get('search', '').lower()
+    filtered_members = Member.query.filter(Member.name.ilike(f'%{search_query}%')).all()
+    return render_template('members.html', members=filtered_members, search_query=search_query)
+
+@app.route('/delete-all-members', methods=['POST'])
+def delete_all_members():
+    try:
+        # Delete all member records
+        Member.query.delete()
+        db.session.commit()
+        flash('All members have been successfully deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while deleting members: {}'.format(e), 'danger')
+    
+    return redirect(url_for('members'))
+
+
 @app.route('/import-books', methods=['GET', 'POST'])
 def import_books():
     if request.method == 'POST':
@@ -201,10 +246,9 @@ def import_books():
         flash(f'Successfully imported {books_imported} books', 'success')
         return redirect(url_for('import_books'))
 
-    return render_template('import_books.html')  # You need to create this template
+    return render_template('import_books.html')  
 
 
-# Additional routes for issuing/returning books, charging rent, etc. would be similar in structure
 
 @app.route('/issue-book', methods=['GET', 'POST'])
 def issue_book():
@@ -236,27 +280,35 @@ def issue_book():
 
     return render_template('issue_book.html', books=books, members=members,issue_date=issue_date)
 
-
 @app.route('/return-book', methods=['GET', 'POST'])
 def return_book():
     if request.method == 'POST':
         transaction_id = request.form.get('transaction_id')
+        if not transaction_id:
+            flash('No transaction ID provided', 'danger')
+            return redirect(url_for('return_book'))
+
         transaction = Transaction.query.get(transaction_id)
         if transaction and not transaction.return_date:
-            transaction.return_date = datetime.utcnow()
-            days_issued = (transaction.return_date - transaction.issue_date).days
-            transaction.rent_fee = days_issued * transaction.daily_rent_fee  # Use the daily rent fee
-            db.session.commit()
-            flash('Book returned successfully. Total rent fee: Rs.{}'.format(transaction.rent_fee), 'success')
+            try:
+                transaction.return_date = datetime.utcnow()
+                days_issued = (transaction.return_date - transaction.issue_date).days
+                transaction.rent_fee = days_issued * transaction.daily_rent_fee
+                db.session.commit()
+                flash('Book returned successfully. Total rent fee: Rs.{}'.format(transaction.rent_fee), 'success')
+            except Exception as e:
+                current_app.logger.error(f'Error when returning book: {e}')
+                db.session.rollback()
+                flash('An error occurred while returning the book', 'danger')
         else:
-            flash('Invalid transaction or book already returned', 'danger')
-        return redirect(url_for('return_book'))
+            flash('Invalid transaction or book already returned', 'warning')
 
-    transactions = db.session.query(Transaction, Book.title, Member.name).\
-        join(Book, Transaction.book_id == Book.id).\
-        join(Member, Transaction.member_id == Member.id).\
-        filter(Transaction.return_date.is_(None)).all()
+    transactions = db.session.query(Transaction, Book.title, Member.name)\
+        .join(Book, Transaction.book_id == Book.id)\
+        .join(Member, Transaction.member_id == Member.id)\
+        .filter(Transaction.return_date.is_(None)).all()
     return render_template('return_book.html', transactions=transactions)
+
 
 
 @app.route('/delete-all-transactions', methods=['POST'])
@@ -333,21 +385,33 @@ def transactions():
         flash('An error occurred while processing transactions.', 'danger')
         return redirect(url_for('index'))
 
-@app.route('/delete-all-books', methods=['POST'])
-def delete_all_books():
+
+
+
+@app.route('/delete-selected-transactions', methods=['POST'])
+def delete_selected_transactions():
     try:
-        # Delete all book records
-        Book.query.delete()
-        db.session.commit()
-        flash('All books have been successfully deleted.', 'success')
+        data = request.get_json()  # Get JSON data from the request
+        transaction_ids = data.get('transactionIds')  # Access transactionIds from the JSON data
+        if not transaction_ids:
+            raise ValueError('No transaction IDs provided')
+
+        # Delete selected transactions by their IDs
+        for transaction_id in transaction_ids:
+            transaction = Transaction.query.get(transaction_id)
+            if transaction:
+                db.session.delete(transaction)
+
+        db.session.commit()  # Commit the changes to the database
+        flash('Selected transactions have been successfully deleted.', 'success')
     except Exception as e:
-        db.session.rollback()
-        flash('An error occurred while deleting books: {}'.format(e), 'danger')
-    
-    return redirect(url_for('books'))
+        db.session.rollback()  # Rollback changes in case of an error
+        flash('An error occurred while deleting transactions: {}'.format(e), 'danger')
+
+    return redirect(url_for('transactions'))  # Redirect to the transactions page
 
 
 if __name__ == '__main__':
     with app.app_context():  # Pushes an application context manually
-        db.create_all()  # Now this has the application context it needs
+        db.create_all()  
     app.run(debug=True)

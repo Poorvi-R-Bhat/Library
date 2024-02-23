@@ -3,27 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <title>Update Member</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Aptos', sans-serif;
+            background-color: #d6b52e
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            background-color: #d6b52e;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+    
+        }
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #333; 
+            border-color: #0056b3;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #d6b52e;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .back-btn i {
+            margin-right: 5px;
+        }
+        .home-btn {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff; 
+        }
+        .home-btn:hover {
+            background-color: #0056b3; 
+            border-color: #0056b3; 
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
+    <a href="/" class="btn home-btn position-fixed" style="bottom: 20px; left: 20px;"><i class="fas fa-home"></i> Home</a>
+    <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+
     <div class="container mt-5">
-        <div class="flash-messages">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-        </div>
+        <!-- Flashed messages section -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <!-- End of flashed messages section -->
+
         <h2>Update Member</h2>
-        <form action="" method="POST">
+        <form action="{{ url_for('update_member', member_id=member.id) }}" method="POST">
             <div class="form-group">
-                <label for="name">Name</label>
+                <label for="name"><b>Name</b></label>
                 <input type="text" class="form-control" id="name" name="name" value="{{ member.name }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Update Member</button>
+            <!-- Other form fields omitted for brevity -->
+
+            <button type="submit" class="btn btn-primary btn-block">Update Member</button>
         </form>
     </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </body>
 </html>

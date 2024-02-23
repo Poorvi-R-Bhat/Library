@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Aptos', sans-serif;
+            background-color: #fff;
             margin: 0;
             padding: 0;
         }
@@ -17,14 +17,14 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            max-width: 800px; /* Adjusted max-width to match import_book.html */
+            background-color: #d6b52e;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
             position: relative;
         }
         .title-container {
-            background-color: #f0f0f0;
+            background-color: #fff;
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -34,11 +34,21 @@
             color: #333;
             text-align: center;
             padding-bottom: 5px;
-            margin-bottom: 0; /* Adjust margin to match other pages */
+            margin-bottom: 0;
         }
         .form-group {
             margin-bottom: 20px;
         }
+        .btn-primary {
+             background-color: #007bff; 
+            border-color: #007bff; 
+            color: #ffffff; 
+        }
+        .btn-primary:hover {
+            background-color: #333333; /* Darker shade of black */
+            border-color: #333333; /* Darker shade of black */
+        }
+
         .form-control {
             border: 1px solid #ced4da;
             border-radius: 5px;
@@ -47,18 +57,18 @@
             background-color: #ffc107;
             border-color: #ffc107;
             color: #212529;
-            width: 100%; /* Make the button full-width */
+            width: 100%;
         }
         .btn-warning:hover {
             background-color: #e0a800;
             border-color: #d39e00;
         }
         .back-btn {
-            position: fixed; /* Change position to fixed */
+            position: fixed;
             top: 20px;
             left: 20px;
-            background: #007bff;
-            color: #fff;
+            background: #d6b52e;
+            color: #333;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -67,6 +77,20 @@
         .back-btn i {
             margin-right: 5px;
         }
+        .search-form {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #000; /* Black color */
+            border-color: #000; /* Black color */
+            color: #fff; /* White text color */
+        }
+
+        .btn-primary:hover {
+            background-color: #333; /* Darker shade of black */
+            border-color: #333; /* Darker shade of black */
+        }
+        
     </style>
 </head>
 <body>
@@ -88,32 +112,88 @@
               window.history.back();
             }
         </script>
+        <a href="/" class="btn btn-primary position-fixed" style="bottom: 20px; left: 20px; background-color: #007bff; color: #ffffff;"><i class="fas fa-home"></i> Home</a>
 
         <!-- Title container -->
         <div class="title-container">
             <h2 class="title">Return Book</h2>
         </div>
 
-        <form action="" method="POST">
-            <div class="form-group">
-                <label for="transaction_id">Select Transaction</label>
-                <select class="form-control" id="transaction_id" name="transaction_id">
-                    {% for transaction, book_title, member_name in transactions %}
-                        <option value="{{ transaction.id }}">Book: {{ book_title }}, Member: {{ member_name }}</option>
-                    {% endfor %}
-                </select>
+        <!-- Search filter -->
+        <form action="/return-book" method="GET" class="search-form">
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Enter Member Name" name="search">
+                </div>
+                <div class="col">
+                    <button type="button" onclick="returnBook()" class="btn btn-primary">Return Book</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="issue_date">Book Issue Date</label>
-                <input type="date" class="form-control" id="issue_date" name="issue_date" required>
-            </div>
-            <div class="form-group">
-                <label for="return_date">Book Return Date</label>
-                <input type="date" class="form-control" id="return_date" name="return_date" required>
-            </div>
-        
-            <button type="submit" class="btn btn-warning">Return Book</button>
         </form>
+
+        {% if transactions %}
+            {% for transaction, book_title, member_name in transactions %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Book: {{ book_title }}</h5>
+                        <p class="card-text">Author: {{ transaction.book.author }}</p>
+                        <p class="card-text">Book Issue Date: {{ transaction.issue_date.strftime('%d-%m-%Y') }}</p>
+                        <p class="card-text">Member Name: {{ member_name }}</p>
+                        <form action="/return-book" method="POST" class="search-form">
+                            <input type="hidden" name="transaction_id" value="{{ transaction.id }}">
+                            <div class="form-group">
+                                <label for="return_issue_date">Return Issue Date</label>
+                                <input type="date" class="form-control" id="return_issue_date" name="return_issue_date" value="{{ today_date }}" required>
+                            </div>
+                            <script>
+                                // Function to get today's date in the format yyyy-mm-dd
+                                function getTodayDate() {
+                                    let today = new Date();
+                                    let dd = String(today.getDate()).padStart(2, '0');
+                                    let mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                    let yyyy = today.getFullYear();
+                            
+                                    return yyyy + '-' + mm + '-' + dd;
+                                }
+                            
+                                // Set today's date as the default value for the Return Issue Date input field
+                                document.getElementById('return_issue_date').value = getTodayDate();
+                            </script>
+                            
+                            <button type="submit" class="btn btn-primary">Return Book</button>
+                        </form>
+                        <!-- Add other details as needed -->
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No transactions found.</p>
+        {% endif %}
     </div>
+    <script>
+        function returnBook() {
+            // Submit the form asynchronously using JavaScript
+            var form = document.getElementById('return-book-form');
+            var formData = new FormData(form);
+    
+            fetch('/return-book', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Show success message
+                    window.location.reload(); // Reload the page
+                } else {
+                    alert(data.message); // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    
 </body>
 </html>

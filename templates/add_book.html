@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        /* Your existing CSS styles */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Aptos', sans-serif;
+            background-color: #fff;
             margin: 0;
             padding: 0;
         }
@@ -17,28 +18,38 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #d6b52e;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
+        .btn-container {
+            display: flex;
+            justify-content: flex-end; /* Adjusted alignment to right */
+            align-items: center;
+            margin-bottom: 20px;
+        }
         h2 {
-            color: #007bff;
+            color: #333;
             margin-bottom: 30px;
             text-align: center;
             font-size: 28px;
             font-weight: bold;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
         .form-group {
             margin-bottom: 20px;
         }
         .form-control {
-            border: 1px solid #ced4da;
+            border: 1px solid #fff;
             border-radius: 5px;
         }
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: #333;
+            border-color: #fff;
         }
         .btn-primary:hover {
             background-color: #0056b3;
@@ -48,8 +59,8 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #007bff;
-            color: #fff;
+            background: #d6b52e;
+            color: #333;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -58,9 +69,21 @@
         .back-btn i {
             margin-right: 5px;
         }
+        /* Additional style for Home button */
+        .btn-primary-home {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff; /* Set text color to white */
+
+        }
+        .btn-primary-home:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <a href="/" class="btn btn-primary-home position-fixed" style="bottom: 20px; left: 20px;"><i class="fas fa-home"></i> Home</a>
     <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
 
     <div class="container mt-5">
@@ -96,7 +119,7 @@
             </div>
             <div class="form-group">
                 <label for="year">Publication Year</label>
-                <input type="number" class="form-control" id="year" name="year" min="0" value="2021">
+                <input type="number" class="form-control" id="year" name="year" min="0" value="2024">
             </div>
             <div class="form-group">
                 <label for="isbn">ISBN</label>

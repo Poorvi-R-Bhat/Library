@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Aptos', sans-serif;
             background-image: url('background_image.jpg');
             background-size: cover;
             margin: 0;
             padding: 0;
-        }
+        }   
         .container {
             margin-top: 50px;
             padding: 20px;
@@ -24,7 +24,7 @@
             margin-right: auto;
         }
         .title-container {
-            background-color: #f0f0f0;
+            background-color: #d6b52e;
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -37,12 +37,13 @@
         }
         .btn-container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
         .btn-add {
-            margin-right: 10px;
+            margin-bottom: 10px;
             background-color: #28a745;
             color: #fff;
             border: none;
@@ -55,30 +56,29 @@
             background-color: #218838;
         }
         .btn-delete-all {
+            margin-bottom: 10px;
             background-color: #dc3545;
             color: #fff;
             border-color: #dc3545;
+            font-size: 14px;
         }
         .btn-delete-all:hover {
             background-color: #c82333;
             border-color: #bd2130;
         }
         .table th {
-            background-color: #007bff;
-            color: #fff;
+            background-color: #d6b52e;
+            color: #181d22;
         }
         .table th:hover {
-            background-color: #0056b3;
+            background-color: #d6b52e;
         }
         .table td {
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid #181d22;
         }
         .action-icons a {
             margin-right: 10px;
-            color: #007bff;
-        }
-        .action-icons a:hover {
-            color: #0056b3;
+            color: #d6b52e;
         }
         .pagination-container {
             margin-top: 20px;
@@ -86,8 +86,8 @@
         }
         .btn-more {
             margin: 5px;
-            background-color: #007bff;
-            color: #fff;
+            background-color: #d6b52e;
+            color: #181d22;
             border: none;
             border-radius: 5px;
             padding: 5px 10px;
@@ -95,7 +95,7 @@
             transition: background-color 0.3s ease;
         }
         .btn-more:hover {
-            background-color: #0056b3;
+            background-color: #d6b52e;
         }
         .custom-checkbox {
             margin: 0;
@@ -104,8 +104,8 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #007bff;
-            color: #fff;
+            background: #d6b52e;
+            color: #181d22;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -114,6 +114,50 @@
         .back-btn i {
             margin-right: 5px;
         }
+        .search-btn {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .search-btn:hover {
+            background-color: #333;
+        }
+        .selected-count {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+        .action-icons .edit-icon {
+            display: inline-block;
+            padding: 5px;
+            border: 1px solid #d6b52e; /* Border color similar to delete icon */
+            border-radius: 5px;
+            font-size: 14px; /* Match font size with delete icon */
+            color: #fff; /* Icon color */
+            position: relative; /* Add relative positioning */
+       }
+
+        .action-icons .edit-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background-color: #d6b52e; /* Yellow color */
+            border-radius: 5px; /* Match border radius with the outer border */
+        }
+
+        .action-icons .edit-icon i {
+            position: relative;
+            z-index: 1; /* Ensure the icon is above the yellow background */
+        }
+
+
     </style>
 </head>
 <body>
@@ -129,7 +173,13 @@
             {% endwith %}
         </div>
 
+        <div class="pagination-container">
+            <ul class="pagination justify-content-center">
+            </ul>
+        </div>
+        
         <div class="container">
+            <a href="/" class="btn btn-primary position-fixed" style="bottom: 20px; left: 20px;"><i class="fas fa-home"></i> Home</a>
             <button onclick="goBack()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button> <!-- Back button -->
             <script>
             function goBack() {
@@ -137,64 +187,109 @@
             }
             </script>
             <div class="title-container">
-            <h2 class="title">Books</h2>
-        </div>
-        <div class="btn-container">
-            <form action="/books" method="GET">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search books by title or author" name="search" value="{{ search_query }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                <h2 class="title">Books</h2>
+            </div>
+            <div class="btn-container">
+                <a href="/add-book" class="btn btn-success btn-add"><i class="fas fa-plus"></i> Add New Book</a> 
+                <form action="/books" method="GET">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search books by title or author" name="search" value="{{ search_query }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary search-btn" type="submit">Search</button> <!-- search button -->
+                        </div>
                     </div>
-                </div>
-            </form>
-            <a href="/add-book" class="btn btn-success btn-add"><i class="fas fa-plus"></i> Add New Book</a> <!-- Added icon -->
-            <form action="/delete-all-books" method="POST" onsubmit="return confirm('Are you sure you want to delete all books? This action cannot be undone.');">
-                <button type="submit" class="btn btn-danger btn-delete-all">Delete All Books</button>
-            </form>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" class="custom-checkbox" id="select-all" onchange="selectAllBooks()"></th> <!-- Added checkbox for select all -->
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for book in books %}
-                <tr>
-                    <td><input type="checkbox" class="custom-checkbox"></td>
-                    <td>{{ book.title }}</td>
-                    <td>{{ book.author }}</td>
-                    <td>{{ book.stock }}</td>
-                    <td class="action-icons">
-                        <a href="/books/update/{{ book.id }}"><i class="fas fa-edit"></i></a>
-                        <form action="/books/delete/{{ book.id }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                            <button type="submit" class="btn-delete"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            
-            </tbody>
-        </table>
+                </form>
+                <form action="/delete-all-books" method="POST" onsubmit="return confirm('Are you sure you want to delete all books? This action cannot be undone.');">
+                    <button type="submit" class="btn btn-danger btn-delete-all">Delete All Books</button>
+                </form>
+ 
+               <form action="/issue-selected-books" method="POST" onsubmit="updateSelectedBooks()">
+                    <input type="hidden" name="book_ids" id="book-ids" value="">
+                    <button type="submit" class="btn btn-primary">Issue Books</button>
+                </form>
+            </div>
+            <div class="selected-count">Selected:<span id="selected-count"></span></div>
 
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="custom-checkbox" id="select-all" onchange="selectAllBooks()"></th> <!-- Added checkbox for select all -->
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td><input type="checkbox" name="book_ids[]" value="{{ book.id }}" class="custom-checkbox" onchange="updateSelectedCount()"></td>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.stock }}</td>
+                        <td class="action-icons">
+                            <a href="/books/update/{{ book.id }}" class="edit-icon" style="display: inline-block; margin-right: 5px;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="/books/delete/{{ book.id }}" method="POST" onsubmit="return confirm('Are you sure?');" style="display: inline-block;">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                                                
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         function selectAllBooks() {
             let checkboxes = document.querySelectorAll('.custom-checkbox');
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = document.getElementById('select-all').checked;
+            checkboxes.forEach((checkbox, index) => {
+                // Exclude the first checkbox (header checkbox)
+                if (index !== 0) {
+                    checkbox.checked = document.getElementById('select-all').checked;
+                }
             });
+            updateSelectedCount(); // Update selected count when select all is clicked
         }
-
+    
+        function updateSelectedCount() {
+            let selectedCount = 0; // Initialize count to zero
+            document.querySelectorAll('.custom-checkbox').forEach((checkbox, index) => {
+                // Exclude the first checkbox (header checkbox)
+                if (index !== 0 && checkbox.checked) {
+                    selectedCount++;
+                }
+            });
+            document.getElementById('selected-count').innerText = selectedCount;
+        }
+    
         function fetchData(count) {
-            // Replace this with your actual logic to fetch and display more books from the backend
             console.log(`Fetching and displaying ${count} books`);
         }
     </script>
+        <script>
+        function updateSelectedBooks() {
+            let selectedBooks = [];
+            document.querySelectorAll('.custom-checkbox:checked').forEach((checkbox) => {
+                selectedBooks.push(checkbox.value);
+            });
+            document.getElementById('book-ids').value = selectedBooks.join(',');
+        }
+    </script>
+<script>
+    document.getElementById('deleteForm').addEventListener('submit', function(e) {
+    var selectedBooks = document.querySelectorAll('input[name="visibleCheckbox"]:checked');
+    var hiddenInput = document.getElementById('hiddenInputForBookIds');
+
+    hiddenInput.value = Array.from(selectedBooks).map(function(checkbox) {
+        return checkbox.value;
+    }).join(',');
+});
+
+</script>
+
 </body>
 </html>
