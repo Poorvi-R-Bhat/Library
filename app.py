@@ -414,4 +414,4 @@ def delete_selected_transactions():
 if __name__ == '__main__':
     with app.app_context():  # Pushes an application context manually
         db.create_all()  
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
