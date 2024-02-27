@@ -8,31 +8,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background-color: #f0f0f0; /* Change background color */
+            background-color: #fff;
             font-family: Archive, sans-serif;
-            margin: 0; /* Remove default body margin */
-
+            margin: 0;
+        }
+        .index-image {
+            width: 100%;
+            height: auto;
         }
         .container {
-            margin-top: 50px;
+            margin-top: 20px;
             text-align: center;
-            border: 2px solid #e7d553; /* Add border around the page */
+            border: 2px solid #e7d553;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
-            background-image: url('index_Image.jpg'); /* Add background image */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          /*background: #fff url('{{ url_for('static', filename='background.png') }}') no-repeat center;*/
             background-size: cover;
-            background-position: center;   
-            position: relative; /* Add relative positioning to the container */
-            background-image: url('{{ url_for('static', filename='background.png') }}'); Update background image
-
         }
         .app-logo {
-            width: 150px; /* Set the width of the logo */
-            height: 150px; /* Maintain aspect ratio */
-            position: absolute; /* Position the logo absolutely within the container */
-            top: 3px; /* Adjust top position as needed */
-            left: 10px; /* Adjust left position as needed */
+            width: 150px;
+            height: auto;
+            margin: 20px 0;
         }
         .btn-container {
             display: flex;
@@ -46,15 +43,15 @@
             height: 70px;
             font-size: 18px;
             border-radius: 35px;
-            background-color: #181d22;
             color: #140505;
             border: none;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
             transition: background-color 0.3s ease;
+            background-color: #d6b52e; 
         }
         .btn-main i {
             margin-right: 10px;
@@ -63,61 +60,32 @@
             background-color: #5a6268;
         }
         h1 {
-            color: #020507; /* Change title color */
+            color: #020507;
             margin-bottom: 30px;
-            border-bottom: 2px solid #007bff; /* Add border to the title */
+            border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
-            display: inline-block; /* Highlight title with frame */
+            display: inline-block;
             padding: 10px 20px;
             border: 2px solid #d6b52e;
             border-radius: 10px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .btn-main:not(.view-transactions-btn):not(.issue-book-btn) {
-            background-color: #d6b52e; 
-            border-color: #d6b52e; 
-        }
-        .btn-main:not(.view-transactions-btn):not(.issue-book-btn):hover {
-            background-color: #d6b52e; 
-            border-color: #d6b52e; 
-        }
-        .view-transactions-btn {
-            background-color: #d6b52e;
-            color: #333;
-            border-color: #d6b52e;
-        }
-        .view-transactions-btn:hover {
-            background-color: #d6b52e;
-            color: #fff;
-            border-color: #d6b52e;
-        }
-        .issue-book-btn {
-            background-color: #d6b52e; 
-            border-color: #d6b52e; 
-        }
-        .issue-book-btn:hover {
-            background-color: #d6b52e; 
-            border-color: #d6b52e; 
-        }
-        .container h1 {
-            border: 2px solid #d6b52e;
-        }
-
     </style>
 </head>
-<img src="{{ url_for('static', filename='index_Image.jpg') }}" alt="Index Image"  width="1500" height="300">
+<body>
+    <img src="{{ url_for('static', filename='index_Image.jpg') }}" alt="Index Image" class="index-image">
     <div class="container">
-        <img src="{{ url_for('static', filename='P.jpg') }}" width="150" height="250" class="app-logo">
+        <img src="{{ url_for('static', filename='P.jpg') }}" alt="Library Logo" class="app-logo">
 
-        <h1>Library Management System</h1> <!-- Add icon to the title -->
+        <h1>Library Management System</h1>
         <div class="btn-container">
-            <a href="/books" class="btn btn-primary btn-main"><i class="fas fa-book icon"></i>Manage Books</a>
-            <a href="/members" class="btn btn-secondary btn-main"><i class="fas fa-users icon"></i>Manage Members</a>
-            <a href="/issue-book" class="btn btn-success btn-main"><i class="fas fa-plus icon"></i>Issue Book</a> 
-            <a href="/return-book" class="btn btn-warning btn-main"><i class="fas fa-undo-alt icon"></i>Return Book</a>
-            <a href="/import-books" class="btn btn-info btn-main"><i class="fas fa-file-import icon"></i>Import Books</a>
-            <a href="/transactions" class="btn btn-info btn-main"><i class="fas fa-list icon"></i>View Transactions</a>
+            <a href="/books" class="btn btn-primary btn-main"><i class="fas fa-book"></i> Manage Books</a>
+            <a href="/members" class="btn btn-secondary btn-main"><i class="fas fa-users"></i> Manage Members</a>
+            <a href="/issue-book" class="btn btn-success btn-main"><i class="fas fa-plus"></i> Issue Book</a>
+            <a href="/return-book" class="btn btn-warning btn-main"><i class="fas fa-undo-alt"></i> Return Book</a>
+            <a href="/import-books" class="btn btn-info btn-main"><i class="fas fa-file-import"></i> Import Books</a>
+            <a href="/transactions" class="btn btn-dark btn-main"><i class="fas fa-list"></i> View Transactions</a>
         </div>
     </div>
 
