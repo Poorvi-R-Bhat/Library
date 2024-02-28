@@ -1,4 +1,4 @@
-# Library Management Web Application
+![Homre_Page](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/87a10fc5-2d91-49e6-820d-93521ffcce19)# Library Management Web Application
 
 ## Introduction:
 Brief introduction to the Library Management Web Application.
@@ -16,13 +16,18 @@ Guidelines on how to use the application effectively.
 - Charging rent fees on book returns.
 - Debt management for members.
 
+## Technologies Used :
+Backend Framework: Flask
+Frontend: HTML, CSS, JavaScript (if applicable)
+Database: 
+Deployment:pythonanywhere.com
+
 ## Screenshots:
 Include screenshots of key screens and reports:
 1. Home Page
-   ![Home Page](/screenshots/home.png)
+   ![Homre_Page](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/d5c96024-7a16-40f3-bd00-d427a331d9e2)
+   
    Description of the home page.
-2. Book Management
+3. Book Management
    ![Book Management](/screenshots/books.png)
-   Description of the book management page.
-   ...
-   Add more screenshots as needed.
+   Description of the book management page
