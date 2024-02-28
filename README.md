@@ -48,8 +48,7 @@ open a browser and type poorvi.pythonanywhere.com
 
 4.Updating the existing Member
    By clicking the edit icon in the member page,Member can be updated
-   ![Update_Member](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/d57fca25-3748-4b85-88c8-ecfd61f13737)
-   
+   ![Update_Member](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/2826ea87-f3c7-4bf2-ad47-c6dfc87d7732)
 
 5. Issue the book to a member
    Issuing a book to member with the rent fee
