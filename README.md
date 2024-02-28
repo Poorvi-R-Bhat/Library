@@ -34,4 +34,14 @@ Include screenshots of key screens and reports:
    ![Homre_Page](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/d5c96024-7a16-40f3-bd00-d427a331d9e2)
    
 3. Book Management
-   ![Book Management](/screenshots/books.png)
+  ![Manage_books](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/dbbe248c-192f-4514-863d-a1571e827cdf)
+
+4. Issue the book to a member
+   
+![Issue_Book](https://github.com/Poorvi-R-Bhat/Library/assets/27720465/5ec98abc-bbe4-4fda-b4f8-ff22dfbdd2eb)
+
+5. Adding Member
+
+6. 
+
+7. Transaction
